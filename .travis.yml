@@ -1,0 +1,15 @@
+language: ruby
+
+install:
+  - bundle install
+
+script: bundle exec rake site:deploy --quiet
+
+env:
+  global:
+    secure: KOd2meDeC3KF75CTOQ+eNSApLZqO3CreTm3fX35wdyNIezmml6xLZtckQdkrvLcwc2Gj2DSyrPtIgJMrKr9aITWGkmR1rqrPA7yRmHQSjdE1oG/XI72H/u3ofK8wS6hATh6gVJFgF4BKKPDjT7Hdv7aZ6i5WNr3wKUBdyMQ8JauvkZcix/pdKoPGGZ17UGhAMOZwRtyI264UHTzXddvKuYKI0RROraPRt39drXl+s/crLNjb559a5TTtbCW+ovAYq1J4fyLiwxPfE+8cg/yu67tY7NVT/Je12Tzo5fWslev8RT2UAZc6Ax7/MthDbokooeLs28YP5SN2xMxvPipNJIDwN+XEBGWgYKFAOLpYBDZJfLPzmeAXETT23ZVpz6pFKbdW1Sd5FbJkI4m/QRH/Cznz48mwnlCLWvdIo7Y5ZRZsY1Qz+P2+U5IUJH6u0WRQbTfcmtTf5DJdDVsArR45V2/gBh9HSYyC6I9FpTqZumniIM+MtrpyfuDh5517kIgL2p/OpdHK8zepzXFPWqEeDTjUs2M6EQjMmCAcWovlbiuMOdFUDI1AIjTxTc++hefzZwlnx36if5qi0vt0MDUeG/G2pRTd768SXvPTfrcDE9Ej7gRSup8Zurmu2LXT+HUmFz5DziyvZn8Oe6kPGhI+uJFxnK0F7dUUMw/WFReaqC8=
+
+# Generate your secure token with the travis gem:
+# get Github token from your Travis CI profile page
+# gem install travis
+# travis encrypt 'GIT_NAME="YOUR_USERNAME" GIT_EMAIL="YOUR_EMAIL" GH_TOKEN=YOUR_TOKEN'
