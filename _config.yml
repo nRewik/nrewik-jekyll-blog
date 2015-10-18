@@ -1,6 +1,8 @@
 # Build settings
 destination: ../nrewik.github.io
 
+paginate: 4
+permalink: pretty
 markdown: kramdown
 
 kramdown:
@@ -23,14 +25,54 @@ exclude:
   - .travis.yml
 
 # Site settings
-title: Naive Dev
-email: nrewik@outlook.com
-description: > # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
-baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://yourdomain.com" # the base hostname & protocol for your site
-twitter_username: jekyllrb
-github_username:  nrewik
+title:       nRewik's Blog
+email:       nrewik@outlook.com
+author:      Nutchaphon Rewik
+description: > # my blog.
+baseurl:     ""
+url:         "/"
+date_format: "%b %-d, %Y"
+
+# Google services
+google_analytics: UA-68986775-1
+google_verification: hqSVqSrewlOa-h85DXYE9ZawUCTrGu8BJ4yxwi8BfHg
+
+# Optional features
+animated:             false
+show_related_posts:   false
+show_post_footers:    true
+show_social_icons:    true
+ajaxify_contact_form: false
+
+# Disqus post comments
+# (leave blank to disable Disqus)
+disqus_shortname:
+
+# Social icons
+github_username: nrewik
+bitbucket_username: 
+stackoverflow_id: nrewik
+twitter_username:
+google_plus_id:
+linkedin_username:
+angellist_username:
+medium_id: '@nrewik'
+bitcoin_url:
+paypal_url:
+flattr_button:
+
+# Post sharing icons
+show_sharing_icons: false
+share_text: 'Share this post!'
+
+# Change to 'true' to enable individual icons
+share_facebook: true
+share_twitter: true
+share_googleplus: false
+share_linkedin: false
+share_digg: false
+share_tumblr: false
+share_reddit: false
+share_stumbleupon: false
+share_hackernews: false
 

@@ -1,0 +1,73 @@
+pre,
+pre code {
+  background-color: transparent;
+  border-radius: $pre-border-radius;
+}
+
+pre,
+code {
+  -webkit-font-smoothing: auto;
+  font: 14px/1.8em menlo, monospace;
+}
+
+/*
+code {
+  color: #000;
+}
+*/
+
+pre {
+  padding: 20px 30px 20px;
+  /* line-height: 1.11; */
+  overflow-x: scroll;
+  margin-bottom: 1.5rem;
+  background-color: #F9FAFA;
+  border: 1px solid #E6E6E6;
+  tab-size: 4;
+}
+
+/*
+.highlight .p {
+  font-size: 1.125rem;
+  line-height: 1;
+}
+*/
+
+pre {
+    counter-reset: line-numbering;
+    white-space: pre;
+    overflow-x: auto;
+    word-break: inherit;
+    word-wrap: inherit;
+}
+
+pre a::before {
+  content: counter(line-numbering);
+  counter-increment: line-numbering;
+  padding-right: 1em; /* space after numbers */
+  width: 25px;
+  text-align: right;
+  opacity: 0.7;
+  display: inline-block;
+  color: $light-gray;
+  margin-right: 16px;
+  font-size: 13px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+pre a:first-of-type::before {
+  padding-top: 10px;
+}
+
+pre a:last-of-type::before {
+  padding-bottom: 10px;
+}
+
+pre a:only-of-type::before {
+  padding: 10px;
+}

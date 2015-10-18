@@ -6,21 +6,24 @@ date:   2015-10-17 17:00:00
 Hi Hello There
 
 ```swift
-class ParticleModel {
-	private var point = ( x: 0.0, y: 0.0 )
-	private var velocity = 100.0
+class UIView : UIResponder {  
+	init!(frame: CGRect)
 
-	private func updatePoint(newPoint: (Double, Double), newVelocity: Double) {
-		point = newPoint
-		velocity = newVelocity
-	}
+	var superview: UIView! { get }  
+	var subviews: [AnyObject]! { get }  
+	var window: UIWindow! { get }
 
-	func update(newP: (Double, Double), newV: Double) {
-		updatePoint(newP, newVelocity: newV)
-	}
+	// ...
+
+	func isDescendantOfView(view: UIView!) -> Bool
+	func viewWithTag(tag: Int) -> UIView!
+
+	// ...
+
+	var constraints: [AnyObject]! { get }
+
+	// ...
 }
-let x = "\"haha\""
-let ccc = "😀"
 ```
 
 

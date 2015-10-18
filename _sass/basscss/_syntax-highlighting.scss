@@ -1,0 +1,128 @@
+.highlight {
+  -webkit-text-size-adjust: none;
+}
+
+.highlight .c,
+.highlight .cs,
+.highlight .cm,
+.highlight .cp,
+.highlight .c1 {
+  color: $hljs-comment;
+}
+
+.highlight .k,
+.highlight .kc,
+.highlight .kd,
+.highlight .kn,
+.highlight .kr,
+.highlight .kp {
+  color: $hljs-keyword;
+}
+
+.highlight .kt{
+  color: #3F6E74 // Keyword.Type
+}
+
+.highlight .na,
+.highlight .nb,
+.highlight .nc,
+.highlight .no,
+.highlight .nd,
+.highlight .ni,
+.highlight .ne,
+.highlight .nf,
+.highlight .nl,
+.highlight .nn,
+.highlight .nx {
+  color: $hljs-name;
+}
+
+.highlight .il {
+  color: $hljs-number;
+}
+
+.highlight {
+
+  .mf    { color: #1C00CF } // Literal.Number.Float
+  .mh    { color: #1C00CF } // Literal.Number.Hex
+  .mi    { color: #1C00CF } // Literal.Number.Integer
+  .mo    { color: #1C00CF } // Literal.Number.Oct
+
+  .s     { color: $hljs-string } // Literal.String
+  .sb    { color: $hljs-string } // Literal.String.Backtick
+  .sc    { color: $hljs-string } // Literal.String.Char
+  .sd    { color: $hljs-string } // Literal.String.Doc
+  .s2    { color: $hljs-string } // Literal.String.Double
+  .se    { color: $hljs-string } // Literal.String.Escape
+  .sh    { color: $hljs-string } // Literal.String.Heredoc
+  .si    { color: $hljs-string } // Literal.String.Interpol
+  .sx    { color: $hljs-string } // Literal.String.Other
+  .sr    { color: $hljs-string } // Literal.String.Regex
+  .s1    { color: $hljs-string } // Literal.String.Single
+  .ss    { color: $hljs-string } // Literal.String.Symbol
+}
+
+.hljs-title,
+.hljs-id,
+.scss .hljs-preprocessor {
+  color: $hljs-title;
+  font-weight: bold;
+}
+
+.highlight .k {
+  font-weight: normal;
+}
+
+.highlight .nc,
+.highlight .no {
+  color: $hljs-type;
+}
+
+.highlight .o {
+  color: black;
+  /*
+  color: $hljs-tag;
+  font-weight: normal;*/
+}
+
+.highlight .nb {
+  color: $hljs-attribute;
+}
+
+.highlight .sr {
+  color: $hljs-regexp;
+}
+
+.highlight .ss {
+  color: $hljs-symbol;
+}
+
+.hljs-built_in {
+  color: $hljs-built-in;
+}
+
+.hljs-preprocessor,
+.hljs-pragma,
+.hljs-pi,
+.hljs-doctype,
+.hljs-shebang,
+.hljs-cdata {
+  color: $hljs-preprocessor;
+  font-weight: bold;
+}
+
+.hljs-deletion {
+  background: $hljs-deletion;
+}
+
+.hljs-addition {
+  background: $hljs-addition;
+}
+
+.diff .hljs-change {
+  background: $hljs-change;
+}
+
+.hljs-chunk {
+  color: $hljs-chunk;
+}
