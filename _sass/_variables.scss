@@ -1,18 +1,18 @@
 // Typography
 $base-font-size: 14px !default;
 $bold-font-weight: bold !default;
-$font-family: 'Merriweather', 'PT Serif', Georgia, 'Times New Roman', serif !default;
+$font-family: "Lora", "Lucida Grande", "Helvetica Neue", "Helvetica", "Arial", "Verdana", "serif";
 $line-height: 1.5 !default;
 $heading-font-family: 'Lato', 'Helvetica Neue', Helvetica, sans-serif !default;
 $heading-font-weight: 900 !default;
 $heading-line-height: 1.25 !default;
 $monospace-font-family: Menlo, Consolas, monospace !default;
-$h1: 2.998rem !default;
-$h2: 1.5rem !default;
-$h3: 1.25rem !default;
-$h4: 1rem !default;
-$h5: .875rem !default;
-$h6: .75rem !default;
+$h1: 52px !default;
+$h2: 36px !default;
+$h3: 26px !default;
+$h4: 24px !default;
+$h5: 20px !default;
+$h6: 18px !default;
 $h00: 4rem !default;
 $h0: 3rem !default;
 $h00-responsive: 8vw !default;
@@ -24,7 +24,7 @@ $h1-responsive-max: 3.84rem !default;
 $abbr-border-bottom: 1px black dotted;
 
 // Page width
-$measure-width: 42rem !default;
+$measure-width: 700px !default;
 
 // Viewport widths
 $viewport-small: 32em;
@@ -117,5 +117,5 @@ $footer-border-top: thin solid #f3f3f3;
 $footer-padding: $space-3;
 $footer-color: #7a7a7a;
 $footer-bg-color: #fafafa;
-$footer-font-weight: 300;
-$footer-font-size: .75rem;
+$footer-font-weight: 400;
+$footer-font-size: 12px;

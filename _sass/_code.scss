@@ -4,34 +4,31 @@ pre code {
   border-radius: $pre-border-radius;
 }
 
-pre,
-code {
+
+pre {
+  font-family: $monospace-font-family;
+  font-size: 14px;
+  line-height: 1.8em;
   -webkit-font-smoothing: auto;
-  font: 14px/1.8em menlo, monospace;
 }
 
-/*
-code {
-  color: #000;
+code.highlighter-rouge{
+  font: 14px $monospace-font-family;
+  border-radius: 0;
+  border: 1px solid #E5E5E5;
+  background-color: #F7F7F7;
+  padding: 0.225rem 0.3rem 0.2rem 0.3rem;
+  -webkit-font-smoothing: auto;
 }
-*/
 
 pre {
   padding: 20px 30px 20px;
-  /* line-height: 1.11; */
   overflow-x: scroll;
   margin-bottom: 1.5rem;
   background-color: #F9FAFA;
   border: 1px solid #E6E6E6;
   tab-size: 4;
 }
-
-/*
-.highlight .p {
-  font-size: 1.125rem;
-  line-height: 1;
-}
-*/
 
 pre {
     counter-reset: line-numbering;

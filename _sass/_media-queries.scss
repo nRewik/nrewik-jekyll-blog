@@ -8,6 +8,10 @@
     font-size: $h1;
   }
 
+  h2 {
+    font-size: $h2;
+  }
+
   .site-header {
     text-align: left;
   }
@@ -24,7 +28,7 @@
     font-size: $h3;
     float: left;
   }
-
+  
   .site-header .site-nav {
     float: right;
     margin-top: .25rem;
@@ -32,8 +36,12 @@
 
   blockquote {
     margin-left: $space-3;
-    padding: $space-3;
+    //padding: $space-2;
   }
+
+  blockquote, blockquote p {
+    font-size: 28px;
+}
 
   .social-icons-left {
     text-align: left;
@@ -42,6 +50,16 @@
   .social-icons-right {
     text-align: right;
   }
+
+  p, dl, ol, ul {
+    font-size: $h5;
+    letter-spacing: -0.006em;
+  }
+
+  h1,h2,h3,h4,h5, h6 {
+    margin-top: 56px;
+  }
+
 }
 
 @media screen and (min-width: $viewport-medium) {
@@ -58,7 +76,7 @@
 
 @media screen and (min-width: $viewport-large + 14) {
   em img {
-    max-width: $measure-width + 14;
-    margin-left: -7em;
+    max-width: $measure-width + 224px;
+    margin-left: -112px;
   }
 }

@@ -21,10 +21,9 @@
 }
 
 .post-footer {
-  @extend .italic;
-
   margin-top: .75rem;
   text-align: center;
+  font-family: $heading-font-family;
 }
 
 .post-footer .avatar {

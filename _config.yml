@@ -34,7 +34,7 @@ url:         "/"
 date_format: "%b %-d, %Y"
 
 # Google services
-google_analytics: UA-68986775-1
+google_analytics:
 google_verification: hqSVqSrewlOa-h85DXYE9ZawUCTrGu8BJ4yxwi8BfHg
 
 # Optional features
@@ -51,7 +51,7 @@ disqus_shortname:
 # Social icons
 github_username: nrewik
 bitbucket_username: 
-stackoverflow_id: nrewik
+stackoverflow_id: 1314783
 twitter_username:
 google_plus_id:
 linkedin_username:
