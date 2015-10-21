@@ -7,8 +7,8 @@ categories: programming swift
 tag: programming swift
 ---
 
-<div class="center"><img src="{{ site.baseurl }}/images/auto_layout_logo.png"/></div>
-<br/>
+<figure class="center"><img src="{{ site.baseurl }}/images/auto_layout_logo.png"/></figure>
+
 Auto Layout is a powerful feature. It manages the position and size of the views. Basically, we create constraints, Auto Layout will automatically adjust the views to satisfy all constraints.
 
 ## Animation
@@ -36,11 +36,14 @@ var selected = false
     }
 }
 ```
+<figure class="center"><img src="{{ site.baseurl }}/images/animation-with-auto-layout-1.gif"/></figure>
 
 In the code, we saw `widthConstraint` is an `@IBOutlet`. That means we can setup the constraint in Interface Builder, and then connect it into code.
 
 ## Real App Animation
-Easy right ? Now, let’s make an animation, which we would make it into the real app. Like this,
+Easy right ? Now, let’s make an animation, which we would make it into the real app. Like this:
+
+<figure class="center"><img src="{{ site.baseurl }}/images/animation-with-auto-layout-2.gif"/></figure>
 
 How to achieve this ? Without Auto Layout, you might calculate tableView frame and check the boundary, I’m sure that it will take more than 10 lines of codes to maintain the positions and sizes.
 
@@ -76,6 +79,8 @@ So, we set `tableViewHeightConstraint`’s priority to be less than 1000. This c
 ## Another Example
 
 In this case, I have three views. Left, middle and right. I want the behaviour that right view will move closer to left view when middle view is hidden.
+
+<figure class="center"><img src="{{ site.baseurl }}/images/animation-with-auto-layout-3.gif"/></figure>
 
 ```swift
 if selected{
