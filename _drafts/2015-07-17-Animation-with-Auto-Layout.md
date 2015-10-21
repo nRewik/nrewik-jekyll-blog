@@ -1,13 +1,15 @@
 ---
 layout: post
 title:  "Animation with Auto Layout"
-date:   2015-10-20
-summary: Why I need to write a function that return a function that return a function?
+date:   2015-07-17
+summary: Animate view with Auto Layout the right way.
 categories: programming swift
 tag: programming swift
 ---
 
-<figure class="center"><img src="{{ site.baseurl }}/images/auto_layout_logo.png"/></figure>
+<figure class="center">
+    <img src="{{ site.baseurl }}/images/auto_layout_logo.png"/>
+</figure>
 
 Auto Layout is a powerful feature. It manages the position and size of the views. Basically, we create constraints, Auto Layout will automatically adjust the views to satisfy all constraints.
 
