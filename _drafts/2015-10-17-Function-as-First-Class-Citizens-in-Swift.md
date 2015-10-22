@@ -6,11 +6,11 @@ summary: Why I need to write a function that return a function that return a fun
 categories: programming swift
 tag: programming swift
 ---
-Why I need to write a function that return a function that return a function ? This is the first question that I was confused with Functional Programming, until I finally understand one of the core concepts.
+Why I need to write a function that return a function that return a function ? This is the question that I was confused when I start learning Functional Programming. 
 
-**“Functions as first-class citizens”** is an elusive concept for beginners. This article shows how to treat function properly by giving an example of writing a rule-based string validator. {% tk %}
+**“Functions as first-class citizens”** is an elusive concept for beginners. This article will shows how to treat function properly by giving an example of writing a rule-based string validator.
 
-You can see the full source code at [nRewik/Rule.swift](https://gist.github.com/nRewik/c2cfcc041928db562df8).
+You can see the full source code at [nRewik/Rule.swift](https://gist.github.com/nRewik/c2cfcc041928db562df8)
 
 
 ## Functions as Variables
