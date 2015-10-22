@@ -152,7 +152,7 @@ enum Rule{
 let negateTransformer: ValidatorTransformer = { validator in
     return { text in !validator(text) } 
 }
-let notPalindromRule = Rule.transform{ rule, negateTransformer }
+let notPalindromRule = Rule.transform( rule, negateTransformer )
 ```
 
 We can make the syntax more concise by turning `negateTransformer` into `!` operator and add a shortcut for creating a negate rule.
