@@ -1,19 +1,13 @@
 ---
 layout: page
-title: About Pixyll
+title:
 permalink: /about/
 ---
 
-This Jekyll theme was crafted with <3 by [John Otander](http://johnotander.com)
-([@4lpine](https://twitter.com/4lpine)).
+My name is Nutchaphon Rewik. I am an iOS developer based in Bangkok, Thailand. 
 
-Checkout the [Github repository](https://github.com/johnotander/pixyll) to download it,
-request a feature, report a bug, or contribute. It's free, and open source
-([MIT](http://opensource.org/licenses/MIT)).
+I am a code lover <span style='font-size: 12px;'>❤️</span>. I write interesting programming posts, including programming language, design pattern, and best practice. You can read my fresh baked post once a month.
 
-Thanks to the following:
+If you have any question, or want to connect. Feel free to drop an email [nrewik@outlook.com](nrewik@outlook.com)
 
-* [BASSCSS](http://basscss.com)
-* [Jekyll](http://jekyllrb.com)
-* [Refills](http://refills.bourbon.io/)
-* [Type Scale](http://type-scale.com/)
+**Enjoy coding :)**
