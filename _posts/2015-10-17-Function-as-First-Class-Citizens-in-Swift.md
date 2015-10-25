@@ -28,7 +28,7 @@ Have you heard about *[Wave–particle duality](https://www.youtube.com/watch?v=
 
 > Functions are not just  functions, they are variables.
 
-Functions are not just functions, they are variables. And being a variable means it belongs to a type. The validate function has `String–>Bool` type, which doesn’t give any sense of a variable, so I will rename it to:
+Functions are not just functions, they are variables. And being a variable means it belongs to a type. The validate function has `String–>Bool` type, which doesn’t sound like any variable type, so I will rename it to:
 
 ```swift
 typealias Validator = String -> Bool
@@ -122,7 +122,7 @@ Just like the previous `.length`, we have function as a parameter, but now it i
 > Whenever you feel it’s too complicated, try give it a nickname.
 
 ## Returning Functions
-Rule is now customisable, but still lack of combinability. *Transformer* and *Combinator* are function types that return a function, which allow the combinations of rules.
+Rule is now customisable, but still lack of combinability. *Transformer* and *Combiner* are function types that return a function, which allow the combinations of rules. {% tk %}
 
 **Transformer**
 A rule can be transformed to another rule. For example we might create a negate rule that yield opposite result.
@@ -171,7 +171,7 @@ prefix func ! (rule: Rule) -> Rule{
 // usage
 let notPalindromRule = !palindromeRule
 ```
-**Combinator**
+**Combiner**
 A rule can be a combination of several rules. For example, we might create a rule that is combined from a logical conjunction, i.e. *and*, *or*. `ValidatorCombiner` takes two validators and then produce a new one.
 
 ```swift
