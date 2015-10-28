@@ -122,7 +122,7 @@ Just like the previous `.length`, we have function as a parameter, but now it i
 > Whenever you feel it’s too complicated, try give it a nickname.
 
 ## Returning Functions
-Rule is now customisable, but still lack of combinability. *Transformer* and *Combiner* are function types that return a function, which allow the combinations of rules. {% tk %}
+Rule is now customisable, but still lack of combinability. *Transformer* and *Combiner* are function types that return a function, which allow the combinations of rules.
 
 **Transformer**
 A rule can be transformed to another rule. For example we might create a negate rule that yield opposite result.
