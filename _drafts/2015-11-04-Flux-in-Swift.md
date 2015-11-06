@@ -7,9 +7,13 @@ categories: programming swift
 tag: programming swift design-pattern
 --- 
 
-Flux is an application architecture like MV&#42;. It was designed by Facebook. In contrast to MV&#42; pattern, Flux has a uni-directional data flow as its strength, which means data flow through the app in single direction. It makes data more predictable, and make bugs easier to trackdown. In this article, I will show how to Flux—by giving an example of an iOS Todo App.
+Flux is an application architecture designed by Facebook. In constrast to other patterns like MVC and MVVM, Flux has a uni-directional data flow as its strength, which means data flow through the app in a single direction. It makes data more predictable, and make bugs easier to trackdown. In this article, I will show how to Flux—by giving an example of an iOS Todo App. 
+
+The full source code can be found at [nRewik/Flux-in-Swift-Example](https://github.com/nRewik/Flux-in-Swift-Example)
 
 ## The big picture
+
+At first glance, Flux looks like MV&#42; pattern.
 
 Flux is composed from four components. ... 
 
