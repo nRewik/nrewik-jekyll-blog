@@ -30,7 +30,7 @@ email:       nrewik@outlook.com
 author:      Nutchaphon Rewik
 description: > # my blog.
 baseurl:     ""
-url:         "/"
+url:         "https://nrewik.github.io"
 date_format: "%b %-d, %Y"
 
 # Google services
