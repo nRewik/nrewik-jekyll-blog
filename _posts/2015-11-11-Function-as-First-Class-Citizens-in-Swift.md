@@ -1,14 +1,14 @@
 ---
 layout: post
 title:  "Function as First Class Citizens in Swift"
-date:   2015-10-20
+date:   2015-11-11
 summary: Why I need to write a function that return a function that return a function?
 categories: programming swift
 tag: programming swift
 ---
 Why I need to write a function that return a function that return a function ? This is the question that I was confused when I start learning Functional Programming. 
 
-**“Functions as first-class citizens”** is an elusive concept for beginners. This article will shows how to treat function properly by giving an example of writing a rule-based string validator.
+**“Functions as first-class citizens”** is an elusive concept for beginners. This article will show you, how to treat function properly by giving an example of writing a rule-based string validator.
 
 You can see the full source code at [nRewik/Rule.swift](https://gist.github.com/nRewik/c2cfcc041928db562df8)
 
@@ -28,7 +28,7 @@ Have you heard about *[Wave–particle duality](https://www.youtube.com/watch?v=
 
 > Functions are not just  functions, they are variables.
 
-Functions are not just functions, they are variables. And being a variable means it belongs to a type. The validate function has `String–>Bool` type, which doesn’t sound like any variable type, so I will rename it to:
+Functions are not just functions, they are variables. And being a variable means it belongs to a type. The validate function has `String–>Bool` function type, which doesn’t sound like any variable type, so I will rename it to:
 
 ```swift
 typealias Validator = String -> Bool
