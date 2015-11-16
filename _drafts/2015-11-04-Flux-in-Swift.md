@@ -13,9 +13,18 @@ The full source code can be found at [nRewik/Flux-in-Swift-Example](https://gith
 
 ## The big picture
 
-The heart of Flux is a uni-direcitonal data flow, which is illustrated by the arrows pointing forward to a single direction. A component will listen to a component and only talk forward to another component. They will not talk back and forth. It might be easier to think of Flux as pub/sub services!
+The heart of Flux is the one-way route, called a uni-direcitonal data flow, which is illustrated by the arrows pointing forward to a single direction. 
 
-Action, Dispatcher, Store and View—are the four main components, which their roles can be summarised as follows:
+
+Unlike MV* patterns that components can talk back and forth, Flux's components can only talk forward. They only talk to someone they trust, for example, stores only talk to views. 
+
+Talking to everyone without getting feedback, means you are talking to no one. Flux's components listen for feedback events after talking. They again only listen to someone they trust, for example, stores only listen to the dispatcher. 
+
+In summary, We can think of Flux as pub/sub services!
+
+## Components
+
+Action, Dispatcher, Store and View—are the four main components in Flux. Their roles can be summarised as follows:
 
 **Action**
 
@@ -23,25 +32,29 @@ Action, Dispatcher, Store and View—are the four main components, which their r
 
 **Store**
 
-* similar to Model in MVC.
 * stores all UI states.
-* listen to the dispatcher, recieve all actions sent from the dispatcher
-* perform actions.
-* emit an event when states are changed.
+* listens to the dispatcher, recieve all actions sent from the dispatcher
+* performs some actions.
+* emits an event when states are changed.
 
 **Dispatcher**
 
 * the workload distribution centre.
-* dispatch all works to all stores.
+* dispatches all works to all stores.
 
 **View**
 
-* renders UI from Store's state.
-* listen to Store. Whenever stores emit an event, views will update UI corresponding to the new Store's states. 
-* emit and propagate actions through the dispatcher. For example, when user taps at a button.
+* renders UI from store's state.
+* listens to stores. Whenever stores emit an event, views will update UI corresponding to the new store's states. 
+* emits and propagate actions through the dispatcher. For example, when user taps at a button.
 
+## Begin with Store
 
-## Dispatcher
+Stores are not models as we used to think in MVC. Store is a singleton. It is a self-contained universe, completely in control of its data and behaviour. It is a single source of truth in your app, which every UI states rely on it.
+
+`TodoStore` stores `TodoItem` lists.  
+
+register a callback with dispatcher
 
 
 
