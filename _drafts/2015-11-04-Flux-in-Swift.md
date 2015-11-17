@@ -32,8 +32,8 @@ Action, Dispatcher, Store and View—are the four main components in Flux. Their
 
 **Store**
 
-* stores all UI states.
-* listens to the dispatcher, recieve all actions sent from the dispatcher
+* stores and manages application states.
+* listens to the dispatcher, recieve all actions sent from the dispatcher.
 * performs some actions.
 * emits an event when states are changed.
 
@@ -50,11 +50,146 @@ Action, Dispatcher, Store and View—are the four main components in Flux. Their
 
 ## Begin with Store
 
-Stores are not models as we used to think in MVC. Store is a singleton. It is a self-contained universe, completely in control of its data and behaviour. It is a single source of truth in your app, which every UI states rely on it.
+Store manages the application state and logic. They are akin to models in MVC, but stores manage more than a single piece of data. Stores are singleton classes. They are self-contained universes, completely in control of their data and behaviour. Each store is a single source of truth in its domain.
 
-`TodoStore` stores `TodoItem` lists.  
+**Stores and manages application states**
+In this app, there will be only one store—**TodoStore**. It manages everything about **TodoItem**. TodoStore should know how to store, create, delete and edit todo items. 
 
-register a callback with dispatcher
+```swift
+struct TodoItem{
+    let id = NSUUID().UUIDString
+    var text = "hello world!"
+}
+
+class TodoStore{
+
+	// Singleton
+    static let defaultStore = TodoStore()
+    private init(){ }
+
+    // TodoItems List
+    var todoList: [TodoItem]{ return _todoList }
+    private var _todoList: [TodoItem] = []
+    
+    // Action Handler
+    func addTodo(todo: TodoItem){
+        _todoList += [todo]
+    }
+    func editTodo(id: String, text: String){
+        guard let editedIndex  (_todoList.indexOf{ $0.id == id }) else { return }
+        _todoList[editedIndex].text = text
+    }
+    func deleteTodo(id: String){
+        guard let removeIndex = (_todoList.indexOf{ $0.id == id }) else { return }
+        _todoList.removeAtIndex(removeIndex)
+    }
+}
+```
+**Emit change events**
+Stores should emit an event when their states are changed. The event will be sent to listeners. This can be done with delegate pattern. We will be creating this behaviour as a **Store** protocol, since this is a common behaviour for every store.
+
+```swift
+protocol StoreListener: class{
+    func storeDidChanged( store: Store )
+}
+protocol Store: class{
+    var listeners : [ StoreListener ] { get set }
+}
+
+// protocol extension
+extension Store{
+    func registerStoreChanged( listener: StoreListener){
+        guard nil == ( listeners.indexOf{ $0 === listener } ) else { return }
+        listeners += [listener]
+    }
+    func unregisterStoreChanged( listener: StoreListener){
+        guard let removedIndex = (listeners.indexOf{ $0 === listener} ) else { return }
+        listeners.removeAtIndex(removedIndex)
+    }
+    func emitChangeEvent(){
+        for listener in listeners{
+            listener.storeDidChanged(self)
+        }
+    }
+}
+```
+
+Then we adopt Store trait to TodoStore.
+
+```swift
+class TodoStore: Store{
+	// MARK: - Store
+    var listeners: [StoreListener] = []
+
+	// Action Handler
+    func addTodo(todo: TodoItem){
+        _todoList += [todo]
+        emitChangeEvent() // also do this to `editTodo` and `deleteTodo`
+    }
+    // ...
+}
+```
+
+**Dispatcher callback**
+
+Each store should have a **dispatcherCallback**. This callback will be called from the dispatcher when someone create an action. Stores should handle some actions inside this callback, by investigating action type in **Payload**.
+
+When stores are creating, they should register their callback to the dispatcher. After registering a callback, we will get **dispatcherToken**. This token is useful to identify a callback, for example, we can use this token to unregister a callback later.
+
+```swift
+struct Payload{
+    var type = "" // to identify action type
+    var data: [ String : AnyObject ] = [:] // associated data
+}
+
+protocol Store: class{
+	// ...
+    var dispatcherToken: String { get set }
+    func dispatcherCallback( payload: Payload )
+}
+
+class TodoStore: Store{
+
+	private init(){
+        dispatcherToken = Dispatcher.register(dispatcherCallback)
+    }
+
+	// MARK: - Store
+	// ...
+	var dispatcherToken: String = ""
+    func dispatcherCallback( payload: Payload ){
+
+    	// investigate action type
+        switch payload.type{
+        case TodoAction.CREATE_TODO:
+        	// extract associated data from payload
+            guard let text = payload.data["text"] as? String else { return }
+            let newTodo = TodoItem(text: text)
+			// perform action
+            addTodo(newTodo)
+
+        case TodoAction.EDIT_TODO:
+            guard let text = payload.data["text"] as? String else { return }
+            guard let id = payload.data["id"] as? String else { return }
+            editTodo(id, text: text)
+        case TodoAction.DELETE_TODO:
+            guard let id = payload.data["id"] as? String else { return }
+            deleteTodo(id)
+        default:
+            break
+        }
+    }
+}
+```
+
+## Dispatcher
+
+## Action
+
+## View
+
+
+
 
 
 
