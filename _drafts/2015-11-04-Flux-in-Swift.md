@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Flux in Swift"
+title:  "Implementing Flux in Swift"
 date:   2015-11-04
 summary: A one-way traffic pattern.
 categories: programming swift
@@ -52,8 +52,8 @@ Action, Dispatcher, Store and View—are the four main components in Flux. Their
 
 Store manages the application state and logic. They are akin to models in MVC, but stores manage more than a single piece of data. Stores are singleton classes. They are self-contained universes, completely in control of their data and behaviour. Each store is a single source of truth in its domain.
 
-**Stores and manages application states**
-In this app, there will be only one store—**TodoStore**. It manages everything about **TodoItem**. TodoStore should know how to store, create, delete and edit todo items. 
+**manages application states**
+In this app, there will be only one store—**TodoStore**. It manages everything about **TodoItem**. TodoStore knows how to store, create, delete and edit todo items. 
 
 ```swift
 struct TodoItem{
@@ -75,17 +75,11 @@ class TodoStore{
     func addTodo(todo: TodoItem){
         _todoList += [todo]
     }
-    func editTodo(id: String, text: String){
-        guard let editedIndex  (_todoList.indexOf{ $0.id == id }) else { return }
-        _todoList[editedIndex].text = text
-    }
-    func deleteTodo(id: String){
-        guard let removeIndex = (_todoList.indexOf{ $0.id == id }) else { return }
-        _todoList.removeAtIndex(removeIndex)
-    }
+    func editTodo(id: String, text: String){ /* ... */ }
+    func deleteTodo(id: String){ /* ... */ }
 }
 ```
-**Emit change events**
+**emits change events**
 Stores should emit an event when their states are changed. The event will be sent to listeners. This can be done with delegate pattern. We will be creating this behaviour as a **Store** protocol, since this is a common behaviour for every store.
 
 ```swift
@@ -118,6 +112,9 @@ Then we adopt Store trait to TodoStore.
 
 ```swift
 class TodoStore: Store{
+
+    // ...
+
 	// MARK: - Store
     var listeners: [StoreListener] = []
 
@@ -132,9 +129,9 @@ class TodoStore: Store{
 
 **Dispatcher callback**
 
-Each store should have a **dispatcherCallback**. This callback will be called from the dispatcher when someone create an action. Stores should handle some actions inside this callback, by investigating action type in **Payload**.
+Each store should have a dispatcher callback. This callback will be called from the dispatcher when someone create an action. Stores should handle some actions inside this callback, by investigating action type in **Payload**.
 
-When stores are creating, they should register their callback to the dispatcher. After registering a callback, we will get **dispatcherToken**. This token is useful to identify a callback, for example, we can use this token to unregister a callback later.
+When stores are creating, they should register their callback to the dispatcher. After registering a callback, we will get **dispatcher token**. This token is useful to identify a callback, for example, we can use this token to unregister a callback later.
 
 ```swift
 struct Payload{
@@ -150,6 +147,7 @@ protocol Store: class{
 
 class TodoStore: Store{
 
+    // ...
 	private init(){
         dispatcherToken = Dispatcher.register(dispatcherCallback)
     }
@@ -169,12 +167,9 @@ class TodoStore: Store{
             addTodo(newTodo)
 
         case TodoAction.EDIT_TODO:
-            guard let text = payload.data["text"] as? String else { return }
-            guard let id = payload.data["id"] as? String else { return }
-            editTodo(id, text: text)
+            /* ... */
         case TodoAction.DELETE_TODO:
-            guard let id = payload.data["id"] as? String else { return }
-            deleteTodo(id)
+            /* ... */
         default:
             break
         }
@@ -183,10 +178,95 @@ class TodoStore: Store{
 ```
 
 ## Dispatcher
+Dispatcher is the workload distribution centre. It sends every action to every store, by calling callback functions that registered by stores. An app should have only one dispatcher, called a single dispatcher.
+
+```swift
+class Dispatcher{
+    
+    typealias DispatcherCallback = ( Payload -> Void )
+    
+    private static var _callbacks : [ String : DispatcherCallback ] = [:]
+    
+    static func dispatch( payload: Payload ){
+        for callback in _callbacks.values{
+            callback(payload)
+        }
+    }
+    
+    static func register(callback: DispatcherCallback) -> String{
+        let token = NSUUID().UUIDString
+        _callbacks[token] = callback
+        return token
+    }
+    
+    static func unregister(token: String){
+        _callbacks[token] = nil
+    }
+    
+}
+```
 
 ## Action
+Action can be triggered by calling `Dispatcher.dispatch` with payload data. Although, we can create the same payload everywhere, it is a burdensome task. Action creators are helper functions that create and send actions to dispatcher semantically.
+
+```swift
+class TodoAction{
+    
+    // MARK: - Action Type
+    static let CREATE_TODO = "CREATE_TODO"
+    static let EDIT_TODO = "EDIT_TODO"
+    static let DELETE_TODO = "DELETE_TODO"
+    
+    // MARK: - Action Creator
+    static func create(text: String){
+        let payload = Payload(type: TodoAction.CREATE_TODO, data: [ "text" : text ] )
+        Dispatcher.dispatch(payload)
+    }
+    static func edit(id: String, text: String){ /*...*/ }
+    static func delete(id: String){ /* ... */ }
+}
+```
 
 ## View
+View in flux is actually a controller-view. It gets user input, emits an action, and refreshes data from stores. 
+
+// when to register
+
+```swift
+class TodoViewController: UIViewController {
+
+    var todoStore = TodoStore.defaultStore
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        todoStore.registerStoreChanged(self)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        todoStore.unregisterStoreChanged(self)
+    }
+
+    //MARK: - StoreListener
+   func storeDidChanged(store: Store) {
+        // refresh new data when store is updated.
+        tableView.reloadData()
+    }
+}
+```
+
+We can create new todo when user tap + button. For example, create to do action.
+
+```swift
+class TodoViewController: UIViewController {
+
+    @IBAction func addButtonTapped(sender: UIBarButtonItem) {
+        TodoAction.create("My New Todo")
+    }
+}
+```
+
+## Conclusion
 
 
 
