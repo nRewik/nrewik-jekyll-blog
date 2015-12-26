@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Chaining Async Requests in iOS &#8211; nRewik's Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Alternative patterns to avoid pyramid of doom ▲△▲">
+    <meta name="author" content="Nutchaphon Rewik">
+    <meta name="keywords" content="programming, swift">
+    <link rel="canonical" href="https://nrewik.github.io/programming/swift/2015/09/11/Chaining-Async-Requests-in-iOS/">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for nRewik's Blog" href="/feed.xml" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/pixyll.css?201512261648" type="text/css">
+
+    <!-- Fonts -->
+    <link href='//fonts.googleapis.com/css?family=Lato:900,300' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+    
+      <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+    
+
+    <!-- Verifications -->
+    
+      <meta name="google-site-verification" content="hqSVqSrewlOa-h85DXYE9ZawUCTrGu8BJ4yxwi8BfHg" />
+    
+
+    <!-- Open Graph -->
+    <!-- From: https://github.com/mmistakes/hpstr-jekyll-theme/blob/master/_includes/head.html -->
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Chaining Async Requests in iOS">
+    <meta property="og:description" content="">
+    <meta property="og:url" content="https://nrewik.github.io/programming/swift/2015/09/11/Chaining-Async-Requests-in-iOS/">
+    <meta property="og:site_name" content="nRewik&#39;s Blog">
+    <meta property="og:image" content="https://nrewik.github.io/favicon-192x192.png" >
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    
+    <meta name="twitter:title" content="Chaining Async Requests in iOS" />
+    <meta name="twitter:description" content="Alternative patterns to avoid pyramid of doom ▲△▲" />
+    <meta name="twitter:url" content="https://nrewik.github.io/programming/swift/2015/09/11/Chaining-Async-Requests-in-iOS/" />
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/favicon-160x160.png" sizes="160x160">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+
+    
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-69204553-1']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    
+</head>
+
+<body class="site">
+  <div class="site-wrap">
+    <header class="site-header px2 px-responsive">
+  <div class="mt2 wrap">
+    <div class="measure">
+      <!-- <a href="/">
+        <img class="site-title site-title-logo" src="/logo.png"/>
+      </a> -->
+      <!-- <div class"clearfix"/> -->
+      <a href="https://nrewik.github.io" class="site-title">nRewik's Blog</a>
+      <nav class="site-nav">
+        <a href="#">Portfolio</a>
+<a href="/about/">About</a>
+
+      </nav>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</header>
+
+
+    <div class="post p2 p-responsive wrap" role="main">
+      <div class="measure">
+        
+
+
+<div class="post-header mb2">
+  <h1>Chaining Async Requests in iOS</h1>
+  <span class="post-meta">Sep 11, 2015</span><br>
+  
+  <span class="post-meta small">
+  
+    4 minute read
+  
+  </span>
+</div>
+
+<article class="post-content">
+  <p><em>TL;DR callback, delegate and <strong>promise</strong></em></p>
+
+<p>We use asynchronous request to get data somewhere on Internet. A single request is very easy to handle.</p>
+
+<p>Here comes the tough time, dealing with multiple async requests. Especially, when they have dependency between each other like this.</p>
+
+<figure class="center"><img src="/images/chaining-asyn-ios-1.png" /></figure>
+
+<p>In this article, I will show the ways to perform http request chaining in iOS. I will use the <strong>GetAddressesOperation</strong> as an example. This operation has three subtasks as shown below.</p>
+
+<figure class="center"><img src="/images/chaining-asyn-ios-2.png" /></figure>
+
+<h2 id="callback">Callback</h2>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="c1">// 1. login post request</span>
+<span class="kt">NSURLSession</span><span class="o">.</span><span class="nf">sharedSession</span><span class="p">()</span><span class="o">.</span><span class="nf">dataTaskWithRequest</span><span class="p">(</span><span class="n">loginRequest</span><span class="p">){</span> <span class="n">data</span> <span class="p">,</span> <span class="n">res</span> <span class="p">,</span> <span class="n">err</span> <span class="k">in</span>
+    <span class="c1">// let token = data...</span>
+    <span class="c1">// we have token.</span>
+    <span class="k">let</span> <span class="nv">getCurrentUserURL</span> <span class="o">=</span> <span class="kt">NSURL</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="n">getUserDataURL</span> <span class="o">+</span> <span class="s">"?token=</span><span class="se">\(</span><span class="n">token</span><span class="se">)</span><span class="s">"</span><span class="p">)</span><span class="o">!</span>
+    
+    <span class="c1">// 2. get current user data</span>
+    <span class="kt">NSURLSession</span><span class="o">.</span><span class="nf">sharedSession</span><span class="p">()</span><span class="o">.</span><span class="nf">dataTaskWithURL</span><span class="p">(</span><span class="n">getCurrentUserURL</span><span class="p">){</span> <span class="n">data</span> <span class="p">,</span> <span class="n">res</span> <span class="p">,</span> <span class="n">err</span> <span class="k">in</span>
+        
+        <span class="c1">// we have user data, and we get currentUserID</span>
+        <span class="k">let</span> <span class="nv">_getAddressesesURL</span> <span class="o">=</span> <span class="kt">NSURL</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="n">getAddressesURL</span> <span class="o">+</span> <span class="s">"?token=</span><span class="se">\(</span><span class="n">token</span><span class="se">)</span><span class="s">&amp;userId=</span><span class="se">\(</span><span class="n">currentUserID</span><span class="se">)</span><span class="s">"</span><span class="p">)</span><span class="o">!</span>
+        
+        <span class="c1">// 3. get last friend user data</span>
+        <span class="kt">NSURLSession</span><span class="o">.</span><span class="nf">sharedSession</span><span class="p">()</span><span class="o">.</span><span class="nf">dataTaskWithURL</span><span class="p">(</span><span class="n">_getAddressesesURL</span><span class="p">){</span> <span class="n">data</span> <span class="p">,</span> <span class="n">res</span> <span class="p">,</span> <span class="n">err</span> <span class="k">in</span>
+            
+            <span class="c1">// we have addresses. we're done</span>
+            <span class="nf">println</span><span class="p">(</span><span class="s">"done"</span><span class="p">)</span>
+            
+        <span class="p">}</span><span class="o">.</span><span class="nf">resume</span><span class="p">()</span>
+    <span class="p">}</span><span class="o">.</span><span class="nf">resume</span><span class="p">()</span>
+<span class="p">}</span><span class="o">.</span><span class="nf">resume</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p>Callback function is a classic pattern in async. Invoke NSURLSessionTask, after the task is finished, the completion block will be called. At this point, we have the result, then we call the next request in the chain.</p>
+
+<p>Horrible code makes you mad, It is hurting your eyes. Whenever you read this code, you’re stacking your thought like pyramid. This push-to-right code is called Pyramid of doom, or spaghetti code.</p>
+
+<p>Besides ugliness, the code leads to bug. Consider variable scope, when you write the deepest last request, you may accidentally use variable from outer scope and break encapsulations, causing logic errors at worst.</p>
+
+<p>I have no problem with three requests, but real world is so cruel. It’s not just three. If the backend guy insists on giving an easy API. You might have to deal with a horde.</p>
+
+<figure class="center"><img src="/images/chaining-asyn-ios-3.png" /></figure>
+
+<h2 id="delegate">Delegate</h2>
+<p>Unless we specify a completion block, <strong>NSURLSession</strong> will call delegate function instead. ( See full code at <a href="https://gist.github.com/nRewik/f72cbc7e087c447421da">Gist</a>. )</p>
+
+<p>It looks like a black hole. You manage everything inside a delegate function, including, order requests, concatenate data, handle error and parse result. For all requests in one place, Ah that’s a lot. (@_@)</p>
+
+<p>Delegate pattern flattens async blocks, and It’s too flat! It leaves code flow in imagination. Unless I comment the code, it looks unclear what the order that I am now.</p>
+
+<p>Variable scope puzzlement. Variables are all in the same place, you might mess up something unintentionally, and that raise debug/test difficulty +10 levels.</p>
+
+<p>However, in case I really need to do something advance such as, tracking progress, dealing with background, handling auth challenge, working with stream, etc. Delegate would be my first choice.</p>
+
+<figure class="center"><img src="/images/chaining-asyn-ios-4.png" /></figure>
+
+<h2 id="promise">Promise</h2>
+<p>Despite the previous two iOS citizens, Promise is a pattern from else where. It has been developing as a core feature in many languages. However, Swift hasn’t got one.</p>
+
+<p>Fortunately, we don’t have to reinvent the wheel. Thanks to <a href="http://promisekit.org">PromiseKit</a>, an astounding lib that I will be using to defeat this async boss.</p>
+
+<p>Here’s the code that use Promise pattern.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">firstly</span><span class="p">{</span>
+    <span class="k">self</span><span class="o">.</span><span class="nf">getToken</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="o">.</span><span class="n">then</span><span class="p">{</span> <span class="n">token</span> <span class="k">in</span>
+    <span class="k">self</span><span class="o">.</span><span class="nf">getUserData</span><span class="p">(</span><span class="nv">token</span><span class="p">:</span> <span class="n">token</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="o">.</span><span class="n">then</span><span class="p">{</span> <span class="n">userData</span> <span class="k">in</span>
+    <span class="k">self</span><span class="o">.</span><span class="nf">getAddresses</span><span class="p">(</span><span class="nv">userID</span><span class="p">:</span> <span class="n">userID</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="o">.</span><span class="n">then</span><span class="p">{</span> <span class="n">addresses</span> <span class="k">in</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"done"</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="o">.</span><span class="k">catch</span><span class="p">{</span> <span class="n">error</span> <span class="k">in</span>
+    <span class="nf">println</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Promise eliminates spaghetti code, breaks indentations, refactors code in synchronous manner. The code looks cleaner, and more readable. You can try to read code to your friends, and they will suddenly know what you have done.</p>
+
+<p>Chaining async is very easy in Promise. We specify <code class="highlighter-rouge">then</code> handler at the end of Promise, any subsequent <code class="highlighter-rouge">then</code> will wait on the previous promise’s resolution before continuing.</p>
+
+<p>Error handling is the most thing I like. When any Promise thrown an error, the chain will stop, and this is your chance to <code class="highlighter-rouge">catch</code> an error.</p>
+
+<p>We create an async task with <code class="highlighter-rouge">Promise&lt;T&gt;</code>. This type tells us that it might produce <code class="highlighter-rouge">T</code> of a given future <code class="highlighter-rouge">fulfill</code>, or throw an error <code class="highlighter-rouge">reject</code>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">func</span> <span class="nf">getUserData</span><span class="p">(</span><span class="nv">#token</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Promise</span><span class="o">&lt;</span><span class="kt">User</span><span class="o">&gt;</span><span class="p">{</span>
+    <span class="k">return</span> <span class="kt">Promise</span><span class="o">&lt;</span><span class="kt">User</span><span class="o">&gt;</span><span class="p">{</span> <span class="n">fulfill</span><span class="p">,</span> <span class="n">reject</span> <span class="k">in</span>
+        <span class="k">let</span> <span class="nv">task</span> <span class="o">=</span> <span class="kt">NSURLSession</span><span class="o">.</span><span class="nf">sharedSession</span><span class="p">()</span><span class="o">.</span><span class="nf">dataTaskWithURL</span><span class="p">(</span><span class="k">self</span><span class="o">.</span><span class="n">getCurrentUserURL</span><span class="p">){</span> <span class="n">data</span> <span class="p">,</span> <span class="n">res</span> <span class="p">,</span> <span class="n">err</span> <span class="k">in</span>
+            <span class="k">if</span> <span class="k">let</span> <span class="nv">err</span> <span class="o">=</span> <span class="n">err</span><span class="p">{</span>
+                <span class="k">return</span> <span class="nf">reject</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="k">let</span> <span class="nv">user</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">data</span><span class="p">:</span> <span class="n">data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nf">fulfill</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">task</span><span class="o">.</span><span class="nf">resume</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<h2 id="summary">Summary</h2>
+<p>We can handle multiple async requests using callback, delegate and Promise pattern. In my opinion, I would recommend Promise. However, I cannot give a verdict on what is the best. It depends on the situation, and there are other interesting patterns that I didn’t mention here. So, choose what you like, and be happy to live in the world of asynchrony :]</p>
+
+</article>
+
+
+
+
+  <div class="py2 post-footer">
+  <img src="/images/me.png" alt="John Otander" class="avatar" />
+  <p>
+  	Nutchaphon Rewik. An iOS developer based in Bangkok, Thailand. He spends part of his day admiring the beauty of code, and the rest of his time for building things.
+  </p>
+  <p>
+    Follow him on <a href="https://github.com/nRewik">GitHub</a>.
+  </p>
+</div>
+
+
+
+
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="center">
+	<div class="measure footer">
+		<small>
+			Made with <3</br>
+			Copyright 2015 © Nutchaphon Rewik.
+		</small>
+		<div class="social-footer">
+		
+			<div class="social-icons">
+  <div class="social-icons-center">
+    
+      <a class="fa fa-github" href="https://github.com/nrewik"></a>
+    
+    
+    
+      <a class="fa fa-stack-overflow" href="https://stackoverflow.com/users/1314783"></a>
+    
+    
+    
+    
+    
+    
+      <a class="fa fa-medium" href="https://medium.com/@nrewik"></a>
+    
+    
+      <a class="fa fa-envelope" href="mailto:nrewik@outlook.com"></a>
+    
+    <a class="fa fa-rss" href="/feed.xml"></a>
+  </div>
+  <div class="right">
+    
+    
+    
+  </div>
+</div>
+<div class="clearfix"></div>
+
+		
+		</div>
+	</div>
+
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Animation with Auto Layout &#8211; nRewik's Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Animate view with Auto Layout the right way.">
+    <meta name="author" content="Nutchaphon Rewik">
+    <meta name="keywords" content="programming, swift">
+    <link rel="canonical" href="https://nrewik.github.io/programming/swift/2015/07/17/Animation-with-Auto-Layout/">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for nRewik's Blog" href="/feed.xml" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/pixyll.css?201512261648" type="text/css">
+
+    <!-- Fonts -->
+    <link href='//fonts.googleapis.com/css?family=Lato:900,300' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+    
+      <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+    
+
+    <!-- Verifications -->
+    
+      <meta name="google-site-verification" content="hqSVqSrewlOa-h85DXYE9ZawUCTrGu8BJ4yxwi8BfHg" />
+    
+
+    <!-- Open Graph -->
+    <!-- From: https://github.com/mmistakes/hpstr-jekyll-theme/blob/master/_includes/head.html -->
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Animation with Auto Layout">
+    <meta property="og:description" content="">
+    <meta property="og:url" content="https://nrewik.github.io/programming/swift/2015/07/17/Animation-with-Auto-Layout/">
+    <meta property="og:site_name" content="nRewik&#39;s Blog">
+    <meta property="og:image" content="https://nrewik.github.io/favicon-192x192.png" >
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    
+    <meta name="twitter:title" content="Animation with Auto Layout" />
+    <meta name="twitter:description" content="Animate view with Auto Layout the right way." />
+    <meta name="twitter:url" content="https://nrewik.github.io/programming/swift/2015/07/17/Animation-with-Auto-Layout/" />
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/favicon-160x160.png" sizes="160x160">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+
+    
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-69204553-1']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    
+</head>
+
+<body class="site">
+  <div class="site-wrap">
+    <header class="site-header px2 px-responsive">
+  <div class="mt2 wrap">
+    <div class="measure">
+      <!-- <a href="/">
+        <img class="site-title site-title-logo" src="/logo.png"/>
+      </a> -->
+      <!-- <div class"clearfix"/> -->
+      <a href="https://nrewik.github.io" class="site-title">nRewik's Blog</a>
+      <nav class="site-nav">
+        <a href="#">Portfolio</a>
+<a href="/about/">About</a>
+
+      </nav>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</header>
+
+
+    <div class="post p2 p-responsive wrap" role="main">
+      <div class="measure">
+        
+
+
+<div class="post-header mb2">
+  <h1>Animation with Auto Layout</h1>
+  <span class="post-meta">Jul 17, 2015</span><br>
+  
+  <span class="post-meta small">
+  
+    3 minute read
+  
+  </span>
+</div>
+
+<article class="post-content">
+  <figure class="center">
+    <img src="/images/auto_layout_logo.png" />
+</figure>
+
+<p>Auto Layout is a powerful feature. It manages the position and size of the views. Basically, we create constraints, Auto Layout will automatically adjust the views to satisfy all constraints.</p>
+
+<h2 id="animation">Animation</h2>
+<p>Auto Layout animation can be achieved by changing constraint property, and then tell Auto Layout that constraint property is updated, please adjust the views to satisfy new constraint property</p>
+
+<p>The code will look like this.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">constraint</span><span class="o">.</span><span class="n">constant</span> <span class="o">=</span> <span class="n">someValue</span> <span class="c1">//change constraint's property</span>
+<span class="kt">UIView</span><span class="o">.</span><span class="nf">animateWithDuration</span><span class="p">(</span><span class="mf">0.3</span><span class="p">){</span>
+     <span class="k">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="nf">layoutIfNeeded</span><span class="p">()</span> <span class="c1">//tell the view to layout again</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>For example, I create a width constraint to the view. When I press the button, the view will expand and shrink back and forth.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">@IBOutlet</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">widthConstraint</span><span class="p">:</span> <span class="kt">NSLayoutConstraint</span><span class="o">!</span>
+<span class="k">var</span> <span class="nv">selected</span> <span class="o">=</span> <span class="kc">false</span>
+<span class="kd">@IBAction</span> <span class="kd">func</span> <span class="nf">switchButtonPressed</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">selected</span> <span class="o">=</span> <span class="o">!</span><span class="n">selected</span>
+    <span class="n">widthConstraint</span><span class="o">.</span><span class="n">constant</span> <span class="o">=</span> <span class="n">selected</span> <span class="p">?</span> <span class="mi">100</span> <span class="p">:</span> <span class="mi">200</span>
+    <span class="kt">UIView</span><span class="o">.</span><span class="nf">animateWithDuration</span><span class="p">(</span><span class="mf">0.3</span><span class="p">){</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="nf">layoutIfNeeded</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+<figure class="center"><img src="/images/animation-with-auto-layout-1.gif" /></figure>
+
+<p>In the code, we saw <code class="highlighter-rouge">widthConstraint</code> is an <code class="highlighter-rouge">@IBOutlet</code>. That means we can setup the constraint in Interface Builder, and then connect it into code.</p>
+
+<h2 id="real-app-animation">Real App Animation</h2>
+<p>Easy right ? Now, let’s make an animation, which we would make it into the real app. Like this:</p>
+
+<figure class="center"><img src="/images/animation-with-auto-layout-2.gif" /></figure>
+
+<p>How to achieve this ? Without Auto Layout, you might calculate tableView frame and check the boundary, I’m sure that it will take more than 10 lines of codes to maintain the positions and sizes.</p>
+
+<p>With Auto Layout. we can achieve this with just these lines of codes. ( see completed project on <a href="https://github.com/nRewik/AutoLayoutAnimation">Github</a> )</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">tableViewHeightConstraint</span><span class="o">.</span><span class="n">constant</span> <span class="o">=</span> <span class="n">tableView</span><span class="o">.</span><span class="n">contentSize</span><span class="o">.</span><span class="n">height</span>
+<span class="kt">UIView</span><span class="o">.</span><span class="nf">animateWithDuration</span><span class="p">(</span><span class="mf">0.3</span><span class="p">){</span>
+    <span class="k">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="nf">layoutIfNeeded</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Why so short? because, we’ve left other works to Auto Layout in Interface Builder by making these vertical constraints:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>//Vertical Constraints
+1. middleView height = 80
+2. middleView top space to tableView = 0
+3. middleView bottom space to bottomView &gt;= 0
+4. bottomView height = 80
+5. bottomView bottom space to bottom layout guide = 0
+6. tableView height = 100, priority = 999
+7. tableView top space to top layout guide = 0
+</code></pre>
+</div>
+
+<p>Basically, whenever <code class="highlighter-rouge">tableViewHeightConstraint</code> is updated, Auto Layout will also adjust the position of middleView.</p>
+
+<p>Someone might ask. Will it break? If I set the tableView height to 99999, so Auto Layout will not be able to satisfy the constraints. The answer is no. Although, you can set whatever you like, Auto Layout will ignore this constraint.<br />
+Ignore? yes, because IB set constraint’s priority to 1000 by default. 1000 means the constraint must be satisfied. Whatever below 1000 means if the constraint can’t be satisfied, then just ignore it.</p>
+
+<p>So, we set <code class="highlighter-rouge">tableViewHeightConstraint</code>’s priority to be less than 1000. This causes Auto Layout to adjust views’ position before tableView’s height, and when tableView’s height exceeds the boundary, the constraint will be ignored.</p>
+
+<h2 id="another-example">Another Example</h2>
+
+<p>In this case, I have three views. Left, middle and right. I want the behaviour that right view will move closer to left view when middle view is hidden.</p>
+
+<figure class="center"><img src="/images/animation-with-auto-layout-3.gif" /></figure>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">if</span> <span class="n">selected</span><span class="p">{</span>
+    <span class="n">greenViewWidthConstraint</span><span class="o">.</span><span class="n">constant</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">greenGreyHorizontalSpaceConstraint</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">false</span>
+<span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="n">greenViewWidthConstraint</span><span class="o">.</span><span class="n">constant</span> <span class="o">=</span> <span class="mi">75</span>
+    <span class="n">greenGreyHorizontalSpaceConstraint</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">true</span>
+<span class="p">}</span>
+<span class="kt">UIView</span><span class="o">.</span><span class="nf">animateWithDuration</span><span class="p">(</span><span class="mf">0.3</span><span class="p">){</span>
+    <span class="k">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="nf">layoutIfNeeded</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>In the code, I use another constraint’s property to animate Auto Layout. <code class="highlighter-rouge">.active</code> tell Auto Layout whether the constraint will be calculated or not.<br />
+These are constraints that I setup in IB.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>//Horizontal Constraint
+1. redButton width = 75
+2. redButton leading space to superView = 15
+3. redButton trailing space to greenView = 15
+4. greenView width = 75
+5. greenView leading space to redButton = 15
+6. greenView trailing space to greyView = 15
+7. greyView leading space to greenView = 15
+8. greyView trailing space to superView = 15
+9. redButton trailing space to greyView = 15, priority = 999
+</code></pre>
+</div>
+
+<h2 id="summary">Summary</h2>
+<p>We can make animation with Auto Layout by changing constraint property. Auto Layout preserves constraints, even when screen size is changed, or rotated. This ensures that you will get consistent layouts in all screen. So, let Auto Layout do its works, and cheers !!</p>
+
+<p>See completed project on <a href="https://github.com/nRewik/AutoLayoutAnimation">Github</a></p>
+
+
+</article>
+
+
+
+
+  <div class="py2 post-footer">
+  <img src="/images/me.png" alt="John Otander" class="avatar" />
+  <p>
+  	Nutchaphon Rewik. An iOS developer based in Bangkok, Thailand. He spends part of his day admiring the beauty of code, and the rest of his time for building things.
+  </p>
+  <p>
+    Follow him on <a href="https://github.com/nRewik">GitHub</a>.
+  </p>
+</div>
+
+
+
+
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="center">
+	<div class="measure footer">
+		<small>
+			Made with <3</br>
+			Copyright 2015 © Nutchaphon Rewik.
+		</small>
+		<div class="social-footer">
+		
+			<div class="social-icons">
+  <div class="social-icons-center">
+    
+      <a class="fa fa-github" href="https://github.com/nrewik"></a>
+    
+    
+    
+      <a class="fa fa-stack-overflow" href="https://stackoverflow.com/users/1314783"></a>
+    
+    
+    
+    
+    
+    
+      <a class="fa fa-medium" href="https://medium.com/@nrewik"></a>
+    
+    
+      <a class="fa fa-envelope" href="mailto:nrewik@outlook.com"></a>
+    
+    <a class="fa fa-rss" href="/feed.xml"></a>
+  </div>
+  <div class="right">
+    
+    
+    
+  </div>
+</div>
+<div class="clearfix"></div>
+
+		
+		</div>
+	</div>
+
+</footer>
+
+</body>
+</html>

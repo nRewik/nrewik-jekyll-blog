@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Function as First Class Citizens in Swift &#8211; nRewik's Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Why I need to write a function that return a function that return a function?">
+    <meta name="author" content="Nutchaphon Rewik">
+    <meta name="keywords" content="programming, swift">
+    <link rel="canonical" href="https://nrewik.github.io/programming/swift/2015/11/11/Function-as-First-Class-Citizens-in-Swift/">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for nRewik's Blog" href="/feed.xml" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/pixyll.css?201512261648" type="text/css">
+
+    <!-- Fonts -->
+    <link href='//fonts.googleapis.com/css?family=Lato:900,300' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+    
+      <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+    
+
+    <!-- Verifications -->
+    
+      <meta name="google-site-verification" content="hqSVqSrewlOa-h85DXYE9ZawUCTrGu8BJ4yxwi8BfHg" />
+    
+
+    <!-- Open Graph -->
+    <!-- From: https://github.com/mmistakes/hpstr-jekyll-theme/blob/master/_includes/head.html -->
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Function as First Class Citizens in Swift">
+    <meta property="og:description" content="">
+    <meta property="og:url" content="https://nrewik.github.io/programming/swift/2015/11/11/Function-as-First-Class-Citizens-in-Swift/">
+    <meta property="og:site_name" content="nRewik&#39;s Blog">
+    <meta property="og:image" content="https://nrewik.github.io/favicon-192x192.png" >
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    
+    <meta name="twitter:title" content="Function as First Class Citizens in Swift" />
+    <meta name="twitter:description" content="Why I need to write a function that return a function that return a function?" />
+    <meta name="twitter:url" content="https://nrewik.github.io/programming/swift/2015/11/11/Function-as-First-Class-Citizens-in-Swift/" />
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/favicon-160x160.png" sizes="160x160">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+
+    
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-69204553-1']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    
+</head>
+
+<body class="site">
+  <div class="site-wrap">
+    <header class="site-header px2 px-responsive">
+  <div class="mt2 wrap">
+    <div class="measure">
+      <!-- <a href="/">
+        <img class="site-title site-title-logo" src="/logo.png"/>
+      </a> -->
+      <!-- <div class"clearfix"/> -->
+      <a href="https://nrewik.github.io" class="site-title">nRewik's Blog</a>
+      <nav class="site-nav">
+        <a href="#">Portfolio</a>
+<a href="/about/">About</a>
+
+      </nav>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</header>
+
+
+    <div class="post p2 p-responsive wrap" role="main">
+      <div class="measure">
+        
+
+
+<div class="post-header mb2">
+  <h1>Function as First Class Citizens in Swift</h1>
+  <span class="post-meta">Nov 11, 2015</span><br>
+  
+  <span class="post-meta small">
+  
+    7 minute read
+  
+  </span>
+</div>
+
+<article class="post-content">
+  <p>Why I need to write a function that return a function that return a function ? This is the question that I was confused when I start learning Functional Programming.</p>
+
+<p><strong>“Functions as first-class citizens”</strong> is an elusive concept for beginners. This article will show you, how to treat function properly by giving an example of writing a rule-based string validator.</p>
+
+<p>You can see the full source code at <a href="https://gist.github.com/nRewik/c2cfcc041928db562df8">nRewik/Rule.swift</a></p>
+
+<h2 id="functions-as-variables">Functions as Variables</h2>
+<p>Functions as first-class citizens means function is a variable. It’s just that. If you are a wizard who knows how to manipulate function like a variable, you can stop reading now. However, if you are not, this is worth reading.</p>
+
+<p>There are two separated worlds, imperative and functional. Most of people get used to with the former. </p>
+
+<p>In imperative world, we tell the computer what to do, the computer does what we tell. We treat functions as subroutines. For example, we write this function to validate any given string.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">text</span><span class="p">:</span><span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">true</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Have you heard about <em><a href="https://www.youtube.com/watch?v=Q_h4IoPJXZw">Wave–particle duality</a></em> ? that sometimes particle prefers itself to be wave. Functions behaves just like particles. In functional world, they prefer themselves to be variables.</p>
+
+<blockquote>
+  <p>Functions are not just  functions, they are variables.</p>
+</blockquote>
+
+<p>Functions are not just functions, they are variables. And being a variable means it belongs to a type. The validate function has <code class="highlighter-rouge">String–&gt;Bool</code> function type, which doesn’t sound like any variable type, so I will rename it to:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">typealias</span> <span class="kt">Validator</span> <span class="o">=</span> <span class="kt">String</span> <span class="o">-&gt;</span> <span class="kt">Bool</span>
+</code></pre>
+</div>
+
+<p>Revising the name to <code class="highlighter-rouge">Validator</code>, we can pronounce it like Int, String, Bool. We sense it like an ordinary type. When we see a variable of this type, we don’t care how  the function is done, but we care what is done. It is a divergent aspect. Thinking what you want done, rather than how you want something done.</p>
+
+<h2 id="storing-functions">Storing Functions</h2>
+<p>Functions can be stored as variables. You might not know how to, but you already did. Just write a function with <code class="highlighter-rouge">func</code> or <code class="highlighter-rouge">closure</code>. These two words similarly represent a function. Although, they differ in scope and context, they can be used interchangeably.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">enum</span> <span class="kt">Rule</span><span class="p">{</span>
+    <span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">text</span><span class="p">:</span><span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span><span class="p">{</span>
+        <span class="k">return</span> <span class="kc">true</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>or</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">enum</span> <span class="kt">Rule</span><span class="p">{</span>
+    <span class="k">var</span> <span class="nv">validate</span><span class="p">:</span> <span class="kt">Validator</span><span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span> <span class="n">text</span> <span class="k">in</span> <span class="k">return</span> <span class="kc">true</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<h2 id="passing-functions">Passing Functions</h2>
+<p>Let’s add a dummy rule to validate string’s length.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">enum</span> <span class="kt">Rule</span><span class="p">{</span>
+    <span class="k">case</span> <span class="nf">lengthEqual</span><span class="p">(</span><span class="kt">Int</span><span class="p">)</span>
+    <span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span><span class="p">{</span>
+        <span class="k">switch</span> <span class="k">self</span><span class="p">{</span>
+        <span class="k">case</span> <span class="kd">let</span> <span class="o">.</span><span class="nf">lengthEqual</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">characters</span><span class="o">.</span><span class="n">count</span> <span class="o">==</span> <span class="n">length</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">Rule</span><span class="o">.</span><span class="nf">lengthEqual</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="nf">validate</span><span class="p">(</span><span class="s">"12345"</span><span class="p">)</span> <span class="c1">//True</span>
+</code></pre>
+</div>
+<p><code class="highlighter-rouge">.lengthEqual</code> is just a simple rule to show how I use <code class="highlighter-rouge">Rule</code> to validate a string. It is very strict and totally useless, we need to limber it up. To validate length that is greater than or less than <em>x</em>, we might add more cases to enum, but there is functional way to do this.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">typealias</span> <span class="kt">IntComparator</span> <span class="o">=</span> <span class="p">(</span><span class="kt">Int</span><span class="p">,</span><span class="kt">Int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span>
+
+<span class="kd">enum</span> <span class="kt">Rule</span><span class="p">{</span>
+    <span class="k">case</span> <span class="nf">length</span><span class="p">(</span> <span class="kt">IntComparator</span> <span class="p">,</span> <span class="kt">Int</span> <span class="p">)</span>
+    <span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span><span class="p">{</span>
+        <span class="k">switch</span> <span class="k">self</span><span class="p">{</span>
+        <span class="k">case</span> <span class="kd">let</span> <span class="o">.</span><span class="nf">length</span><span class="p">(</span><span class="n">comparator</span><span class="p">,</span> <span class="n">textCount</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nf">comparator</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">characters</span><span class="o">.</span><span class="n">count</span><span class="p">,</span><span class="n">textCount</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">Rule</span><span class="o">.</span><span class="nf">length</span><span class="p">(</span><span class="o">==</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="nf">validate</span><span class="p">(</span><span class="s">"12345"</span><span class="p">)</span> <span class="c1">//True</span>
+<span class="kt">Rule</span><span class="o">.</span><span class="nf">length</span><span class="p">(</span><span class="o">&gt;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="nf">validate</span><span class="p">(</span><span class="s">"12345"</span><span class="p">)</span> <span class="c1">//False</span>
+<span class="kt">Rule</span><span class="o">.</span><span class="nf">length</span><span class="p">(</span><span class="o">&lt;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="nf">validate</span><span class="p">(</span><span class="s">"12345"</span><span class="p">)</span> <span class="c1">//True</span>
+</code></pre>
+</div>
+
+<p>Instead of thinking how to compare the length, thinking how the length is compared. Instead of covering all cases, exposing function as a parameter. <code class="highlighter-rouge">IntComparator</code> is a nickname of <code class="highlighter-rouge">(Int,Int)–&gt;Bool</code>. Its signature is identical to Int operator function <code class="highlighter-rouge">&gt;,&lt;,==,!=,&lt;=,&gt;=</code>, so we can pass it directly as a variable via function argument.</p>
+
+<p>I could add more default rules like <code class="highlighter-rouge">.length</code> to enum cases, but how about other rules that we uncommonly used. Let’s provide <code class="highlighter-rouge">.custom</code> which allows user to create other rules that doesn’t fall in the default category.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">enum</span> <span class="kt">Rule</span><span class="p">{</span>
+    <span class="c1">//...</span>
+    <span class="k">case</span> <span class="nf">custom</span><span class="p">(</span> <span class="kt">Validator</span> <span class="p">)</span>
+    <span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span><span class="p">{</span>
+        <span class="k">switch</span> <span class="k">self</span><span class="p">{</span>
+        <span class="k">case</span> <span class="kd">let</span> <span class="o">.</span><span class="nf">custom</span><span class="p">(</span> <span class="n">validator</span> <span class="p">):</span>
+            <span class="k">return</span> <span class="nf">validator</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+       <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Usage</span>
+<span class="k">let</span> <span class="nv">palindromeRule</span> <span class="o">=</span> <span class="kt">Rule</span><span class="o">.</span><span class="n">custom</span><span class="p">{</span> <span class="n">text</span> <span class="k">in</span>
+    <span class="n">text</span> <span class="o">==</span> <span class="kt">String</span><span class="p">(</span> <span class="n">text</span><span class="o">.</span><span class="n">characters</span><span class="o">.</span><span class="nf">reverse</span><span class="p">()</span> <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">palindromeRule</span><span class="o">.</span><span class="nf">validate</span><span class="p">(</span><span class="s">"ABBABBA"</span><span class="p">)</span> <span class="c1">// true</span>
+<span class="n">palindromeRule</span><span class="o">.</span><span class="nf">validate</span><span class="p">(</span><span class="s">"ABC"</span><span class="p">)</span> <span class="c1">// false</span>
+</code></pre>
+</div>
+
+<p>Just like the previous <code class="highlighter-rouge">.length</code>, we have function as a parameter, but now it is changed to a validator. You might notice that it’s easier to understand when we have <code class="highlighter-rouge">Validator</code> or <code class="highlighter-rouge">IntComparator</code> typealias. This is why I usually give function a nickname, and I recommend you to do so.</p>
+
+<blockquote>
+  <p>Whenever you feel it’s too complicated, try give it a nickname.</p>
+</blockquote>
+
+<h2 id="returning-functions">Returning Functions</h2>
+<p>Rule is now customisable, but still lack of combinability. <em>Transformer</em> and <em>Combiner</em> are function types that return a function, which allow us to create combinations of rules.</p>
+
+<p><strong>Transformer</strong><br />
+A rule can be transformed to another rule. For example we might create a negate rule that yield opposite result.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">typealias</span> <span class="kt">ValidatorTransformer</span> <span class="o">=</span> <span class="kt">Validator</span> <span class="o">-&gt;</span> <span class="kt">Validator</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">ValidatorTransformer</code> takes a <code class="highlighter-rouge">Validator</code> and produce a new one. You can see the benefit of renaming here, because its actual type is the long <code class="highlighter-rouge">(String-&gt;Bool) -&gt; (String-&gt;Bool)</code>.</p>
+
+<p>Let’s create <code class="highlighter-rouge">.transform</code>, which take a transformer to transform a rule, before validate a string.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">enum</span> <span class="kt">Rule</span><span class="p">{</span>
+    <span class="c1">//...</span>
+    <span class="c1">// Note that this case should be marked  as `indirect` to allow recursive enum.</span>
+    <span class="n">indirect</span> <span class="k">case</span> <span class="nf">transform</span><span class="p">(</span> <span class="kt">Rule</span><span class="p">,</span> <span class="kt">ValidatorTransformer</span> <span class="p">)</span>
+    <span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span><span class="p">{</span>
+        <span class="k">switch</span> <span class="k">self</span><span class="p">{</span>
+        <span class="k">case</span> <span class="kd">let</span> <span class="o">.</span><span class="nf">transform</span><span class="p">(</span> <span class="n">rule</span><span class="p">,</span> <span class="n">transformer</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nf">transformer</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">validate</span><span class="p">)(</span><span class="n">text</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Usage</span>
+<span class="k">let</span> <span class="nv">negateTransformer</span><span class="p">:</span> <span class="kt">ValidatorTransformer</span> <span class="o">=</span> <span class="p">{</span> <span class="n">validator</span> <span class="k">in</span>
+    <span class="k">return</span> <span class="p">{</span> <span class="n">text</span> <span class="k">in</span> <span class="o">!</span><span class="nf">validator</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="p">}</span> 
+<span class="p">}</span>
+<span class="k">let</span> <span class="nv">notPalindromRule</span> <span class="o">=</span> <span class="kt">Rule</span><span class="o">.</span><span class="nf">transform</span><span class="p">(</span> <span class="n">rule</span><span class="p">,</span> <span class="n">negateTransformer</span> <span class="p">)</span>
+</code></pre>
+</div>
+
+<p>We can make the syntax more concise by turning <code class="highlighter-rouge">negateTransformer</code> into <code class="highlighter-rouge">!</code> operator and add a shortcut for creating a negate rule.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="c1">// negateTransformer</span>
+<span class="k">prefix</span> <span class="kd">func</span> <span class="o">!</span> <span class="p">(</span> <span class="nv">validator</span><span class="p">:</span> <span class="kt">Validator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Validator</span><span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span> <span class="o">!</span><span class="nf">validator</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// negate rule shortcut</span>
+<span class="k">prefix</span> <span class="kd">func</span> <span class="o">!</span> <span class="p">(</span><span class="nv">rule</span><span class="p">:</span> <span class="kt">Rule</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Rule</span><span class="p">{</span>
+    <span class="k">return</span> <span class="kt">Rule</span><span class="o">.</span><span class="nf">transform</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="o">!</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// usage</span>
+<span class="k">let</span> <span class="nv">notPalindromRule</span> <span class="o">=</span> <span class="o">!</span><span class="n">palindromeRule</span>
+</code></pre>
+</div>
+<p><strong>Combiner</strong><br />
+A rule can be a combination of several rules. For example, we might create a rule that is combined from a logical conjunction, i.e. <em>and</em>, <em>or</em>. <code class="highlighter-rouge">ValidatorCombiner</code> takes two validators and then produce a new one.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">typealias</span> <span class="kt">ValidatorCombiner</span> <span class="o">=</span> <span class="p">(</span> <span class="kt">Validator</span> <span class="p">,</span> <span class="kt">Validator</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Validator</span>
+
+<span class="kd">enum</span> <span class="kt">Rule</span><span class="p">{</span>
+    <span class="c1">//...</span>
+    <span class="n">indirect</span> <span class="k">case</span> <span class="nf">combine</span><span class="p">(</span> <span class="kt">Rule</span><span class="p">,</span> <span class="kt">Rule</span><span class="p">,</span> <span class="kt">ValidatorCombiner</span> <span class="p">)</span>
+    <span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span><span class="p">{</span>
+        <span class="k">switch</span> <span class="k">self</span><span class="p">{</span>
+        <span class="k">case</span> <span class="kd">let</span> <span class="o">.</span><span class="nf">combine</span><span class="p">(</span> <span class="n">leftRule</span><span class="p">,</span> <span class="n">rightRule</span><span class="p">,</span> <span class="n">combiner</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nf">combiner</span><span class="p">(</span> <span class="n">leftRule</span><span class="o">.</span><span class="n">validate</span><span class="p">,</span> <span class="n">rightRule</span><span class="o">.</span><span class="n">validate</span> <span class="p">)(</span><span class="n">text</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Usage</span>
+<span class="k">let</span> <span class="nv">andCombiner</span><span class="p">:</span> <span class="kt">ValidatorCombiner</span> <span class="o">=</span> <span class="p">{</span> <span class="k">left</span> <span class="p">,</span> <span class="k">right</span> <span class="k">in</span>
+    <span class="k">return</span> <span class="p">{</span> <span class="n">text</span> <span class="k">in</span> <span class="k">left</span><span class="o">.</span><span class="nf">validate</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="k">right</span><span class="o">.</span><span class="nf">validate</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">let</span> <span class="nv">palindromeGreaterThanFiveRule</span> <span class="o">=</span> <span class="kt">Rule</span><span class="o">.</span><span class="nf">combine</span><span class="p">(</span> <span class="n">palindromeRule</span><span class="p">,</span> <span class="kt">Rule</span><span class="o">.</span><span class="nf">length</span><span class="p">(</span><span class="o">&gt;</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span> <span class="p">,</span> <span class="n">andCombiner</span> <span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Let’s make this more concise again with <code class="highlighter-rouge">&amp;&amp;</code> and <code class="highlighter-rouge">||</code> operator.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="c1">// and combiner</span>
+<span class="kd">func</span> <span class="o">&amp;&amp;</span> <span class="p">(</span> <span class="nv">leftValidator</span><span class="p">:</span> <span class="kt">Validator</span> <span class="p">,</span> <span class="nv">rightValidator</span><span class="p">:</span> <span class="kt">Validator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Validator</span><span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span> <span class="nf">leftValidator</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nf">rightValidator</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// or combiner</span>
+<span class="kd">func</span> <span class="o">||</span> <span class="p">(</span> <span class="nv">leftValidator</span><span class="p">:</span> <span class="kt">Validator</span> <span class="p">,</span> <span class="nv">rightValidator</span><span class="p">:</span> <span class="kt">Validator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Validator</span><span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span> <span class="nf">leftValidator</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="o">||</span> <span class="nf">rightValidator</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// and rule shortcut</span>
+<span class="kd">func</span> <span class="o">&amp;&amp;</span> <span class="p">(</span> <span class="nv">left</span><span class="p">:</span> <span class="kt">Rule</span> <span class="p">,</span> <span class="nv">right</span><span class="p">:</span> <span class="kt">Rule</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Rule</span><span class="p">{</span>
+    <span class="k">return</span> <span class="kt">Rule</span><span class="o">.</span><span class="nf">combine</span><span class="p">(</span><span class="k">left</span><span class="p">,</span> <span class="k">right</span><span class="p">,</span> <span class="o">&amp;&amp;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// or rule shortcut</span>
+<span class="kd">func</span> <span class="o">||</span> <span class="p">(</span> <span class="nv">left</span><span class="p">:</span> <span class="kt">Rule</span> <span class="p">,</span> <span class="nv">right</span><span class="p">:</span> <span class="kt">Rule</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Rule</span><span class="p">{</span>
+    <span class="k">return</span> <span class="kt">Rule</span><span class="o">.</span><span class="nf">combine</span><span class="p">(</span><span class="k">left</span><span class="p">,</span> <span class="k">right</span><span class="p">,</span> <span class="o">||</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// Usage</span>
+<span class="k">let</span> <span class="nv">palindromeGreaterThanFiveRule</span> <span class="o">=</span> <span class="n">palindromeRule</span> <span class="o">&amp;&amp;</span> <span class="kt">Rule</span><span class="o">.</span><span class="nf">length</span><span class="p">(</span><span class="o">&gt;</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">complexRule</span> <span class="o">=</span> <span class="o">!</span><span class="p">(</span> <span class="o">!</span><span class="n">palindromeRule</span> <span class="o">||</span> <span class="kt">Rule</span><span class="o">.</span><span class="nf">length</span><span class="p">(</span><span class="o">&lt;</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span> <span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Finally, String extension and <code class="highlighter-rouge">~=</code> operator eliminate verboseness. Now Rule is more flexible, we can use default rules, customise new rules and combine rules.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="s">"AABBAA"</span> <span class="o">~=</span> <span class="n">palindromeRule</span> <span class="c1">// true</span>
+<span class="s">"ABCDEF"</span> <span class="o">~=</span> <span class="o">.</span><span class="n">alphabetOnly</span> <span class="o">&amp;&amp;</span> <span class="o">.</span><span class="nf">length</span><span class="p">(</span><span class="o">&lt;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="c1">// false</span>
+<span class="s">"test@test.com"</span> <span class="o">~=</span> <span class="o">.</span><span class="n">email</span> <span class="o">&amp;&amp;</span> <span class="o">.</span><span class="nf">length</span><span class="p">(</span><span class="o">&gt;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="c1">// true</span>
+
+<span class="k">switch</span> <span class="s">"some test string"</span><span class="p">{</span>
+<span class="k">case</span> <span class="nv">palindromeGreaterThanFiveRule</span><span class="p">:</span>
+    <span class="nf">print</span><span class="p">(</span><span class="s">"it's a spectacular palindrome."</span><span class="p">)</span>
+<span class="k">case</span> <span class="nv">palindromeRule</span><span class="p">:</span>
+    <span class="nf">print</span><span class="p">(</span><span class="s">"it's just an ordinary palindrome."</span><span class="p">)</span>
+<span class="k">default</span><span class="p">:</span>
+    <span class="nf">print</span><span class="p">(</span><span class="s">"it's not a palindrome"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<h2 id="conclusion">Conclusion</h2>
+<p>Functional Programming is about thinking what you want done rather than how you want something done. Functions are not subroutines. You treat them as variables.</p>
+
+<p>To answer my question “Why I need to write a function that return a function that return a function ?”. Why? because you can. If you have function as a variable mindset, there’s nothing to be confused. You treat them like you used to. Storing, passing, returning them as you do with Int, String, Bool. 😃</p>
+
+
+</article>
+
+
+
+
+  <div class="py2 post-footer">
+  <img src="/images/me.png" alt="John Otander" class="avatar" />
+  <p>
+  	Nutchaphon Rewik. An iOS developer based in Bangkok, Thailand. He spends part of his day admiring the beauty of code, and the rest of his time for building things.
+  </p>
+  <p>
+    Follow him on <a href="https://github.com/nRewik">GitHub</a>.
+  </p>
+</div>
+
+
+
+
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="center">
+	<div class="measure footer">
+		<small>
+			Made with <3</br>
+			Copyright 2015 © Nutchaphon Rewik.
+		</small>
+		<div class="social-footer">
+		
+			<div class="social-icons">
+  <div class="social-icons-center">
+    
+      <a class="fa fa-github" href="https://github.com/nrewik"></a>
+    
+    
+    
+      <a class="fa fa-stack-overflow" href="https://stackoverflow.com/users/1314783"></a>
+    
+    
+    
+    
+    
+    
+      <a class="fa fa-medium" href="https://medium.com/@nrewik"></a>
+    
+    
+      <a class="fa fa-envelope" href="mailto:nrewik@outlook.com"></a>
+    
+    <a class="fa fa-rss" href="/feed.xml"></a>
+  </div>
+  <div class="right">
+    
+    
+    
+  </div>
+</div>
+<div class="clearfix"></div>
+
+		
+		</div>
+	</div>
+
+</footer>
+
+</body>
+</html>
